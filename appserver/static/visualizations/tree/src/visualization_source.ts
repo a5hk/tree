@@ -433,20 +433,21 @@ define([
        }`);
 
       let zdata = [
-        { tid: "p1", cid: "p2" },
+        { tid: "p1", cid: "p2", value: 123456 },
         { tid: "p1", cid: "p3" },
         { tid: "p4", cid: "p5" },
         { tid: "p3", cid: "p4" },
         { tid: "p5", cid: "p6" },
         { tid: "p3", cid: "p7" },
-        { tid: "p8", cid: "p9" },
-        { tid: "p9", cid: "p10" },
-        { tid: "p8", cid: "p11" },
+        // { tid: "p8", cid: "p9" },
+        // { tid: "p9", cid: "p10" },
+        // { tid: "p8", cid: "p11" },
       ];
 
       let f = new Forest(zdata);
       let ydata = f.trees;
       console.log(Object.values(ydata));
+      console.log(JSON.stringify(Object.values(ydata)));
 
       option = {
         tooltip: {
@@ -456,6 +457,7 @@ define([
         series: [
           {
             type: "tree",
+            // data: [xdata],
             data: Object.values(ydata),
             top: "1%",
             left: "7%",
@@ -510,11 +512,12 @@ define([
 interface BranchPair {
   tid: string;
   cid: string;
+  value?: number | "";
 }
 
 interface Branch {
   name: string;
-  value?: string;
+  value: number | "";
   children: Branch[];
 }
 
@@ -524,17 +527,17 @@ class Forest {
 
   constructor(pairs: BranchPair[]) {
     for (const p of pairs) {
-      this.addBranchPair(p.tid, p.cid);
+      this.addBranchPair(p.tid, p.cid, p.value || "");
     }
   }
 
-  addBranchPair(tid: string, bid: string) {
+  addBranchPair(tid: string, bid: string, v: number | "") {
     if (!this.branches.hasOwnProperty(tid)) {
       this.trees[tid] = this.createBranch(tid);
       this.branches[tid] = this.trees[tid];
     }
     if (!this.branches.hasOwnProperty(bid)) {
-      this.branches[bid] = this.createBranch(bid);
+      this.branches[bid] = this.createBranch(bid, v);
     } else {
       if (this.trees[bid]) {
         delete this.trees[bid];
@@ -543,8 +546,8 @@ class Forest {
     this.branches[tid].children.push(this.branches[bid]);
   }
 
-  createBranch(id: string): Branch {
-    return { name: id, children: [] };
+  createBranch(id: string, v: number | "" = ""): Branch {
+    return { name: id, value: v, children: [] };
   }
 
   toJSON(): string {
