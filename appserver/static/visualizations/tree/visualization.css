@@ -3,3 +3,18 @@
  * Class namespacing is good practice.
  */
 
+.tree-container {
+  display: flex;
+  justify-content: space-evenly;
+}
+
+[id^=tree-child-] {
+  height: 180px;
+  width: 320px;
+  flex-grow: 1;
+  margin-left: 16px;
+}
+
+[id^=tree-child-] > div {
+  width: 100% !important;
+}
