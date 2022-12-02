@@ -64,12 +64,13 @@ define([
       }
 
       for (const t in f.trees) {
-        let serie = f.toSerie(t);
+        let option = f.toEchartsOption(t);
 
-        if (serie) {
+        if (option) {
           let elem = document.getElementById(`tree-child-${t}`);
           let treeChart = echarts.init(elem);
-          treeChart.setOption({ series: [serie] });
+          treeChart.setOption(option);
+          console.log(JSON.stringify(option));
         }
       }
 
@@ -92,36 +93,55 @@ define([
 
 // TypeScript from here
 
-class Serie {
-  type = "tree";
-  name = "Tree";
-  data: Branch[];
-  top = "4";
-  left = "8";
-  bottom = "4";
-  right = "8";
-  symbolSize = 7;
-  label = {
-    position: "left",
-    verticalAlign: "middle",
-    align: "right",
+class EchartsOption {
+  // tooltip = {
+  //   trigger: "item",
+  //   triggerOn: "mousemove",
+  // };
+  legend = {
+    top: "40",
+    left: "80",
+    orient: "vertical",
+    data: [
+      {
+        name: "",
+        icon: "rectangle",
+      },
+    ],
+    borderColor: "#c23531",
   };
-  leaves = {
-    label: {
-      position: "right",
-      verticalAlign: "middle",
-      align: "left",
+  series = [
+    {
+      type: /* ...................... */ "tree",
+      name: /* ...................... */ "Tree",
+      data: /* ...................... */ [] as Branch[],
+      top: /* ....................... */ "24",
+      left: /* ...................... */ "32",
+      bottom: /* .................... */ "24",
+      right: /* ..................... */ "32",
+      symbolSize: /* ................ */ 7,
+      label: /* ..................... */ {
+        position: /* ................ */ "left",
+        verticalAlign: /* ........... */ "middle",
+        align: /* ................... */ "right",
+      },
+      leaves: /* .................... */ {
+        label: /* ................... */ {
+          position: /* .............. */ "right",
+          verticalAlign: /* ......... */ "middle",
+          align: /* ................. */ "left",
+        },
+      },
+      emphasis: /* .................. */ {
+        focus: /* ................... */ "descendant",
+      },
+      expandAndCollapse: /* ......... */ true,
+      animationDuration: /* ......... */ 550,
+      animationDurationUpdate: /* ... */ 750,
     },
-  };
-  emphasis = {
-    focus: "descendant",
-  };
-  expandAndCollapse = true;
-  animationDuration = 550;
-  animationDurationUpdate = 750;
-
+  ];
   constructor(b: Branch) {
-    this.data = [b];
+    this.series[0].data = [b];
   }
 }
 
@@ -163,10 +183,11 @@ class Forest {
     return { name: id, value: v, children: [] };
   }
 
-  toSerie(t: string): Serie | false {
+  toEchartsOption(t: string): EchartsOption | false {
     if (this.trees[t]) {
-      let s = new Serie(this.trees[t]);
-      s.name = t;
+      let s = new EchartsOption(this.trees[t]);
+      s.series[0].name = t;
+      s.legend.data[0].name = t;
       return s;
     }
     return false;
