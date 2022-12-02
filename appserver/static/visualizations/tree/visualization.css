@@ -9,9 +9,9 @@
 }
 
 [id^=tree-child-] {
-  height: 180px;
-  width: 320px;
-  min-width: 320px;
+  height: 360px;
+  width: 640px;
+  min-width: 640px;
   flex-grow: 1;
   margin-left: 16px;
 }

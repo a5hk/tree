@@ -115,9 +115,9 @@ class EchartsOption {
       name: /* ...................... */ "Tree",
       data: /* ...................... */ [] as Branch[],
       top: /* ....................... */ "24",
-      left: /* ...................... */ "32",
+      left: /* ...................... */ "64",
       bottom: /* .................... */ "24",
-      right: /* ..................... */ "32",
+      right: /* ..................... */ "64",
       symbolSize: /* ................ */ 7,
       label: /* ..................... */ {
         position: /* ................ */ "left",
@@ -170,12 +170,14 @@ class Forest {
     }
     if (!this.branches.hasOwnProperty(bid)) {
       this.branches[bid] = this.createBranch(bid, v);
+      this.branches[tid].children.push(this.branches[bid]);
     } else {
       if (this.trees[bid]) {
+        this.branches[tid].children.push(this.branches[bid]);
         delete this.trees[bid];
       }
     }
-    this.branches[tid].children.push(this.branches[bid]);
+    // this.branches[tid].children.push(this.branches[bid]);
   }
 
   createBranch(id: string, v: number | "" = ""): Branch {
