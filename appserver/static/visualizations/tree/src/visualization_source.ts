@@ -70,7 +70,6 @@ define([
           let elem = document.getElementById(`tree-child-${t}`);
           let treeChart = echarts.init(elem);
           treeChart.setOption(option);
-          console.log(JSON.stringify(option));
         }
       }
 
@@ -94,10 +93,10 @@ define([
 // TypeScript from here
 
 class EchartsOption {
-  // tooltip = {
-  //   trigger: "item",
-  //   triggerOn: "mousemove",
-  // };
+  tooltip = {
+    trigger: "item",
+    triggerOn: "mousemove",
+  };
   legend = {
     top: "40",
     left: "80",

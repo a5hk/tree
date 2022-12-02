@@ -16,6 +16,6 @@
   margin-left: 16px;
 }
 
-[id^=tree-child-] > div {
+[id^=tree-child-] > div:first-child {
   width: 100% !important;
 }
