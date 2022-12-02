@@ -53,7 +53,6 @@ define([
       // | makeresults | eval s= "p1,p2,12-p1,p3-p4,p5-p3,p4-p5,p6-p3,p7-p8,p9-p9,p10-p8,p11"| eval s=split(s, "-") | mvexpand s|eval s=split(s, ",")|eval parent=mvindex(s,0), child=mvindex(s,1), value=mvindex(s,2)|table parent, child, value
       let inputData: BranchPair[] = data.rows;
       let f = new Forest(inputData);
-      let series = f.toSeries();
 
       // create all elements first to get correct element sizes, then initialize charts
       for (const t in f.trees) {
@@ -64,11 +63,14 @@ define([
         }
       }
 
-      let divs = this.el.querySelectorAll("[id^=tree-child-]");
+      for (const t in f.trees) {
+        let serie = f.toSerie(t);
 
-      for (const d of divs) {
-        let treeChart = echarts.init(d);
-        treeChart.setOption({ series: series.filter((s) => d.id.replace("tree-child-", "") == s.name) });
+        if (serie) {
+          let elem = document.getElementById(`tree-child-${t}`);
+          let treeChart = echarts.init(elem);
+          treeChart.setOption({ series: [serie] });
+        }
       }
 
       this.offset += data.rows.length;
@@ -161,28 +163,12 @@ class Forest {
     return { name: id, value: v, children: [] };
   }
 
-  toSeries(): Serie[] {
-    const series: Serie[] = [];
-    const len = Object.keys(this.trees).length;
-
-    for (const t in this.trees) {
+  toSerie(t: string): Serie | false {
+    if (this.trees[t]) {
       let s = new Serie(this.trees[t]);
       s.name = t;
-
-      series.push(s);
+      return s;
     }
-    return series;
-  }
-
-  // toSerie(t: string): Serie {
-  //   if (this.trees[t]) {
-  //     let s = new Serie(this.trees[t]);
-  //     s.name = t;
-  //     return s;
-  //   }
-  // }
-
-  toJSON(): string {
-    return JSON.stringify(this.trees);
+    return false;
   }
 }
