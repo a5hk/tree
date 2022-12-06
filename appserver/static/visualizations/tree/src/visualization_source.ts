@@ -103,7 +103,7 @@ class EchartsOption {
     orient: "vertical",
     data: [
       {
-        name: "",
+        name: "Tree",
         icon: "rectangle",
       },
     ],
@@ -164,10 +164,15 @@ class Forest {
   }
 
   addBranchPair(tid: string, bid: string, v: number | "") {
+    if (tid == bid) {
+      return;
+    }
+
     if (!this.branches.hasOwnProperty(tid)) {
       this.trees[tid] = this.createBranch(tid);
       this.branches[tid] = this.trees[tid];
     }
+
     if (!this.branches.hasOwnProperty(bid)) {
       this.branches[bid] = this.createBranch(bid, v);
       this.branches[tid].children.push(this.branches[bid]);
