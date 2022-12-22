@@ -8,6 +8,7 @@ define([
   "api/SplunkVisualizationBase",
   "api/SplunkVisualizationUtils",
   "echarts",
+  // "echarts/theme/vintage",
   // Add required assets to this list
 ], function (
   // $,
@@ -18,6 +19,7 @@ define([
   SplunkVisualizationUtils,
   // @ts-expect-error
   echarts
+
   // vizUtils
 ) {
   // Extend from SplunkVisualizationBase
@@ -25,9 +27,11 @@ define([
     initialize: function () {
       this.chunk = 50000;
       this.offset = 0;
-      SplunkVisualizationBase.prototype.initialize.apply(this, arguments);
+      // SplunkVisualizationBase.prototype.initialize.apply(this, arguments);
+
       // Initialization logic goes here
-      this.el.classList.add("tree-container");
+      this.el.classList.add("a5hk-tree-container");
+      this.idPrefix = "a5hk-tree-child-";
     },
 
     // Optionally implement to format data returned from search.
@@ -47,7 +51,6 @@ define([
       if (!data.rows || data.rows.length === 0 || data.rows[0].length === 0) {
         return this;
       }
-
       // updateview logic
 
       // | makeresults | eval s= "p1,p2,12-p1,p3-p4,p5-p3,p4-p5,p6-p3,p7-p8,p9-p9,p10-p8,p11"| eval s=split(s, "-") | mvexpand s|eval s=split(s, ",")|eval parent=mvindex(s,0), child=mvindex(s,1), value=mvindex(s,2)|table parent, child, value
@@ -56,25 +59,34 @@ define([
 
       // create all elements first to get correct element sizes, then initialize charts
       for (const t in f.trees) {
-        if (!document.getElementById(`tree-child-${t}`)) {
+        if (!document.getElementById(`${this.idPrefix}${t}`)) {
           let div = document.createElement("div");
-          div.setAttribute("id", `tree-child-${t}`);
+          div.setAttribute("id", `${this.idPrefix}${t}`);
           this.el.appendChild(div);
         }
       }
+
+      let backgroundColor = "";
 
       for (const t in f.trees) {
         let option = f.toEchartsOption(t);
 
         if (option) {
-          let elem = document.getElementById(`tree-child-${t}`);
-          let treeChart = echarts.init(elem);
+          let elem = document.getElementById(`${this.idPrefix}${t}`);
+          let treeChart = echarts.init(elem, "vintage");
           treeChart.setOption(option);
+
+          if (backgroundColor == "") {
+            backgroundColor = treeChart.getOption().backgroundColor;
+          }
         }
       }
+      this.el.style.backgroundColor = backgroundColor;
 
-      this.offset += data.rows.length;
-      this.updateDataParams({ count: this.chunk, offset: this.offset });
+      if (data.rows.length > this.chunk) {
+        this.offset += data.rows.length;
+        this.updateDataParams({ count: this.chunk, offset: this.offset });
+      }
     },
 
     // Search data params
@@ -86,7 +98,11 @@ define([
     },
 
     // Override to respond to re-sizing events
-    reflow: function () {},
+    reflow: function () {
+      document.querySelectorAll(`[id^=${this.idPrefix}]`).forEach((e) => {
+        echarts.getInstanceByDom(e).resize();
+      });
+    },
   });
 });
 
@@ -97,38 +113,29 @@ class EchartsOption {
     trigger: "item",
     triggerOn: "mousemove",
   };
-  legend = {
-    top: "40",
-    left: "80",
-    orient: "vertical",
-    data: [
-      {
-        name: "Tree",
-        icon: "rectangle",
-      },
-    ],
-    borderColor: "#c23531",
-  };
   series = [
     {
       type: /* ...................... */ "tree",
       name: /* ...................... */ "Tree",
       data: /* ...................... */ [] as Branch[],
-      top: /* ....................... */ "24",
-      left: /* ...................... */ "64",
-      bottom: /* .................... */ "24",
-      right: /* ..................... */ "64",
+      top: /* ....................... */ "16",
+      left: /* ...................... */ "32",
+      bottom: /* .................... */ "16",
+      right: /* ..................... */ "32",
       symbolSize: /* ................ */ 7,
+      initialTreeDepth: /* .......... */ 3,
       label: /* ..................... */ {
-        position: /* ................ */ "left",
-        verticalAlign: /* ........... */ "middle",
-        align: /* ................... */ "right",
+        position: /* ................ */ "right",
+        verticalAlign: /* ........... */ "bottom",
+        align: /* ................... */ "left",
+        padding: /* ................. */ [0, 0, 8, -14],
       },
       leaves: /* .................... */ {
         label: /* ................... */ {
-          position: /* .............. */ "right",
-          verticalAlign: /* ......... */ "middle",
-          align: /* ................. */ "left",
+          position: /* .............. */ "left",
+          verticalAlign: /* ......... */ "bottom",
+          align: /* ................. */ "right",
+          overflow: /* .............. */ "truncate",
         },
       },
       emphasis: /* .................. */ {
@@ -168,6 +175,13 @@ class Forest {
       return;
     }
 
+    if (tid === "" || tid === null) {
+      tid = "Data is missing!";
+    }
+    if (bid === "" || bid === null) {
+      bid = "Data is missing!";
+    }
+
     if (!this.branches.hasOwnProperty(tid)) {
       this.trees[tid] = this.createBranch(tid);
       this.branches[tid] = this.trees[tid];
@@ -182,7 +196,6 @@ class Forest {
         delete this.trees[bid];
       }
     }
-    // this.branches[tid].children.push(this.branches[bid]);
   }
 
   createBranch(id: string, v: number | "" = ""): Branch {
@@ -193,7 +206,6 @@ class Forest {
     if (this.trees[t]) {
       let s = new EchartsOption(this.trees[t]);
       s.series[0].name = t;
-      s.legend.data[0].name = t;
       return s;
     }
     return false;
