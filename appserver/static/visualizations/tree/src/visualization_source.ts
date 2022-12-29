@@ -66,22 +66,15 @@ define([
         }
       }
 
-      let backgroundColor = "";
-
       for (const t in f.trees) {
-        let option = f.toEchartsOption(t);
+        let option = f.toEchartsOption(t, this.currentPalette());
 
         if (option) {
           let elem = document.getElementById(`${this.idPrefix}${t}`);
-          let treeChart = echarts.init(elem, "vintage");
+          let treeChart = this.initChart(elem);
           treeChart.setOption(option);
-
-          if (backgroundColor == "") {
-            backgroundColor = treeChart.getOption().backgroundColor;
-          }
         }
       }
-      this.el.style.backgroundColor = backgroundColor;
 
       if (data.rows.length > this.chunk) {
         this.offset += data.rows.length;
@@ -103,12 +96,27 @@ define([
         echarts.getInstanceByDom(e).resize();
       });
     },
+
+    initChart: function (e: HTMLElement) {
+      if (SplunkVisualizationUtils.getCurrentTheme() == "dark") {
+        return echarts.init(e, "dark");
+      }
+      return echarts.init(e);
+    },
+
+    currentPalette: function (): string[] {
+      if (SplunkVisualizationUtils.getCurrentTheme() == "dark") {
+        return SplunkVisualizationUtils.getColorPalette("splunkCategorical", "dark");
+      }
+      return SplunkVisualizationUtils.getColorPalette();
+    },
   });
 });
 
 // TypeScript from here
 
 class EchartsOption {
+  backgroundColor = "transparent";
   tooltip = {
     trigger: "item",
     triggerOn: "mousemove",
@@ -117,6 +125,7 @@ class EchartsOption {
     {
       type: /* ...................... */ "tree",
       name: /* ...................... */ "Tree",
+      color: /* ..................... */ [] as string[],
       data: /* ...................... */ [] as Branch[],
       top: /* ....................... */ "16",
       left: /* ...................... */ "32",
@@ -146,8 +155,10 @@ class EchartsOption {
       animationDurationUpdate: /* ... */ 750,
     },
   ];
-  constructor(b: Branch) {
+  constructor(b: Branch, n: string, p: string[]) {
     this.series[0].data = [b];
+    this.series[0].name = n;
+    this.series[0].color = p;
   }
 }
 
@@ -202,9 +213,9 @@ class Forest {
     return { name: id, value: v, children: [] };
   }
 
-  toEchartsOption(t: string): EchartsOption | false {
+  toEchartsOption(t: string, palette: string[]): EchartsOption | false {
     if (this.trees[t]) {
-      let s = new EchartsOption(this.trees[t]);
+      let s = new EchartsOption(this.trees[t], t, palette);
       s.series[0].name = t;
       return s;
     }

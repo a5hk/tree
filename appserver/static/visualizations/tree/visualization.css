@@ -12,11 +12,6 @@
 [id^=a5hk-tree-child-] {
   min-height: 160px;
   min-width: 284px;
-  /* flex-grow: 1; */
-  flex-shrink: 1;
+  flex-grow: 1;
   margin: 0;
 }
-
-/* [id^=tree-child-] > div:first-child {
-  width: 100% !important;
-} */
