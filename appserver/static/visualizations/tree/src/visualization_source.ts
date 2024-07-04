@@ -37,7 +37,7 @@ define(["api/SplunkVisualizationBase", "api/SplunkVisualizationUtils", "echarts"
       if (!data.rows || data.rows.length === 0 || data.rows[0].length === 0) {
         return this;
       }
-      // | makeresults | eval s= "p1,p2,12-p1,p3-p4,p5-p3,p4-p5,p6-p3,p7-p8,p9-p9,p10-p8,p11"| eval s=split(s, "-") | mvexpand s|eval s=split(s, ",")|eval parent=mvindex(s,0), child=mvindex(s,1), value=mvindex(s,2)|table parent, child, value
+
       const inputData: Edge[] = data.rows;
       const conf = new Config(config, SplunkVisualizationUtils.getCurrentTheme());
       const forest = new Forest(inputData);
