@@ -1,4 +1,11 @@
-<form class="splunk-formatter-section" section-label="format">
-  <!-- Add html here to create formatter options -->
-  <p>No Options.</p>
+<form class="splunk-formatter-section" section-label="Settings">
+  <splunk-control-group label="Layout">
+    <splunk-radio-input name="{{VIZ_NAMESPACE}}.layout" value="LR">
+      <option value="BT">&uarr;</option>
+      <option value="LR">&rarr;</option>
+      <option value="TB">&darr;</option>
+      <option value="RL">&larr;</option>
+      <option value="radial">&xcirc;</option>
+    </splunk-radio-input>
+  </splunk-control-group>
 </form>

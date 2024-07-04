@@ -4,7 +4,7 @@
     "title": "Tree",
     "id": {
       "group": null,
-      "name": "tree-viz",
+      "name": "tree_viz",
       "version": "1.0.0"
     },
     "author": [
