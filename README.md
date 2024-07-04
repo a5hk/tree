@@ -4,7 +4,7 @@ A chart to display hierarchical data.
 
 ## Usage
 
-This chart expects tabular data with 2 or 3 columns of data. Column three is optional but must be a number when present. It interprets first column as parent node and second column as child node. The value of third optional column is displayed when hovering on a child node. You can click on non-leaf nodes to expand/collapse tree/subtrees. If values of first and second columns are equal for row of data, that row will be discarded.
+This chart expects tabular data with 2 or 3 columns. Column three is optional but must contain a number when present. It interprets the first column as the parent node and the second column as the child node. The value of the third optional column is displayed when hovering over a child node. You can click on non-leaf nodes to expand or collapse tree/subtrees. If the values in the first and second columns are equal for a row of data, that row will be discarded.
 
 ### Examples
 
