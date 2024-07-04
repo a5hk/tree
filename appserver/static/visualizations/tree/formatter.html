@@ -1,11 +1,17 @@
 <form class="splunk-formatter-section" section-label="Settings">
-  <splunk-control-group label="Layout">
-    <splunk-radio-input name="{{VIZ_NAMESPACE}}.layout" value="LR">
+  <splunk-control-group label="Direction">
+    <splunk-radio-input name="{{VIZ_NAMESPACE}}.direction" value="LR">
       <option value="BT">&uarr;</option>
       <option value="LR">&rarr;</option>
       <option value="TB">&darr;</option>
       <option value="RL">&larr;</option>
       <option value="radial">&xcirc;</option>
     </splunk-radio-input>
+  </splunk-control-group>
+
+  <splunk-control-group label="Color">
+    <splunk-color-picker type="custom" value="#6495ED" name="{{VIZ_NAMESPACE}}.itemcolor">
+      <splunk-color>#6495ED</splunk-color>
+    </splunk-color-picker>
   </splunk-control-group>
 </form>

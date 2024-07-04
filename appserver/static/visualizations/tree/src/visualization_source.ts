@@ -93,13 +93,15 @@ class Config {
   foreground: string;
   layout: "orthogonal" | "radial";
   direction: Direction;
+  itemcolor: string;
 
   constructor(c: { [key: string]: string }, mode: string) {
     this.background = mode === "dark" ? "#333" : "#fff";
     this.foreground = mode === "dark" ? "#fff" : "#333";
-    const layout = c["display.visualizations.custom.tree_viz.tree.layout"];
+    const layout = c["display.visualizations.custom.tree_viz.tree.direction"];
     this.layout = layout === "radial" ? "radial" : "orthogonal";
     this.direction = ["LR", "RL", "TB", "BT"].includes(layout) ? (layout as Direction) : "LR";
+    this.itemcolor = c["display.visualizations.custom.tree_viz.tree.itemcolor"];
   }
 }
 
@@ -121,7 +123,7 @@ function option(data: Tree, conf: Config) {
     series: [
       {
         type: /* ...................... */ "tree",
-        // name: /* ...................... */ "Tree",
+        // name: /* ................... */ "Tree",
         color: /* ..................... */ [] as string[],
         data: /* ...................... */ [data],
         top: /* ....................... */ "16",
@@ -130,11 +132,17 @@ function option(data: Tree, conf: Config) {
         right: /* ..................... */ "32",
         symbolSize: /* ................ */ 7,
         initialTreeDepth: /* .......... */ 3,
+        layout: /* .................... */ conf.layout,
+        orient: /* .................... */ conf.direction,
+        itemStyle: /* ................. */ {
+          color: /* ................... */ conf.itemcolor,
+        },
         label: /* ..................... */ {
           position: /* ................ */ "right",
           verticalAlign: /* ........... */ "bottom",
           align: /* ................... */ "left",
           padding: /* ................. */ [0, 0, 8, -14],
+          rotate: /* .................. */ 0,
         },
         leaves: /* .................... */ {
           label: /* ................... */ {
@@ -142,6 +150,7 @@ function option(data: Tree, conf: Config) {
             verticalAlign: /* ......... */ "bottom",
             align: /* ................. */ "right",
             overflow: /* .............. */ "truncate",
+            rotate: /* ................ */ 0,
           },
         },
         emphasis: /* .................. */ {
